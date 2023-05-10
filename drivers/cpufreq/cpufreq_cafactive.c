@@ -1550,10 +1550,12 @@ static void cafactive_late_resume(struct power_suspend *handler)
 	return;
 }
 
+/*
 static struct power_suspend cafactive_suspend = {
 	.suspend = cafactive_early_suspend,
 	.resume = cafactive_late_resume,
 };
+*/
 
 static int __init cpufreq_cafactive_init(void)
 {
