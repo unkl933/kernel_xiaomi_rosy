@@ -31,7 +31,7 @@
  * For MSM8996 (big.LITTLE). CPU0 and CPU1 are LITTLE CPUs; CPU2 and CPU3 are
  * big CPUs.
  */
-#define LITTLE_CPU_MASK (CPU_MASK(0) | CPU_MASK(7))
+#define LITTLE_CPU_MASK (CPU_MASK(0) | CPU_MASK(3))
 
 #define UNTHROTTLE_ZONE (-1)
 
@@ -54,7 +54,7 @@ struct thermal_config {
 };
 
 struct thermal_zone {
-	uint32_t freq[2];
+	uint32_t freq[4];
 	int64_t trip_degC;
 	int64_t reset_degC;
 };
@@ -244,7 +244,7 @@ static uint32_t get_throttle_freq(struct thermal_policy *t,
 	 * index 1.
 	 */
 	spin_lock(&t->lock);
-	freq = zone->freq[CPU_MASK(cpu) & LITTLE_CPU_MASK ? 0 : 1];
+	freq = zone->freq[CPU_MASK(cpu) & LITTLE_CPU_MASK ? 0 : 3];
 	spin_unlock(&t->lock);
 
 	return freq;
@@ -261,7 +261,7 @@ static void set_throttle_freq(struct thermal_policy *t,
 	 * index 1.
 	 */
 	spin_lock(&t->lock);
-	zone->freq[CPU_MASK(cpu) & LITTLE_CPU_MASK ? 0 : 1] = freq;
+	zone->freq[CPU_MASK(cpu) & LITTLE_CPU_MASK ? 0 : 3] = freq;
 	spin_unlock(&t->lock);
 }
 
@@ -366,7 +366,7 @@ static ssize_t thermal_zone_write(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t size)
 {
 	struct thermal_policy *t = t_policy_g;
-	uint32_t freq[2], idx;
+	uint32_t freq[4], idx;
 	int64_t trip_degC, reset_degC;
 	int ret;
 
